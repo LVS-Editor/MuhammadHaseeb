@@ -1,0 +1,92 @@
+ public class Battle
+    {
+        public StringBuilder BattleResult { get; set; }
+
+        private List _bounty { get; set; }
+
+        public Battle()
+        {
+            _bounty = new List();
+            BattleResult = new StringBuilder();
+        }
+
+        public void PerformBattle(Player player1, Player player2)
+        {
+            Card player1Card = player1.Cards.Last();
+            Card player2Card = player2.Cards.Last();
+
+            displayBattleCards(player1Card, player2Card);
+
+            addCardsToBounty(1, player1, player2);
+            performEvaluation(player1, player2, player1Card, player2Card);
+        }
+
+        private void displayBattleCards(Card player1Card, Card player2Card)
+        {
+            BattleResult.Append("Battle Cards: ");
+            BattleResult.Append(player1Card.Rank);
+            BattleResult.Append(" of ");
+            BattleResult.Append(player1Card.Suit);
+            BattleResult.Append(" versus ");
+            BattleResult.Append(player2Card.Rank);
+            BattleResult.Append(" of ");
+            BattleResult.Append(player2Card.Suit);
+            BattleResult.Append("");
+        }
+
+        private void performEvaluation(Player player1, Player player2, Card player1Card, Card player2Card)
+        {
+            if (player1Card.GetRank() &gt; player2Card.GetRank()) battleWon(player1);
+            else if (player1Card.GetRank() &lt; player2Card.GetRank()) battleWon(player2);
+            else war(player1, player2);
+        }
+
+        private void war(Player player1, Player player2)
+        {
+            BattleResult.Append(&quot;************WAR************");
+            addCardsToBounty(3, player1, player2);
+            PerformBattle(player1, player2);
+        }
+
+        private void addCardsToBounty(int number, Player player1, Player player2)
+        {
+            for (int i = 0; i &lt; number; i++)
+            {
+                _bounty.Add(player1.Cards.Last());
+                player1.Cards.Remove(player1.Cards.Last());
+                _bounty.Add(player2.Cards.Last());
+                player2.Cards.Remove(player2.Cards.Last());
+            }
+        }
+
+        private void battleWon(Player player)
+        {
+            displayBounty();
+            displayBattleWinner(player);
+            foreach (var card in _bounty)
+            {
+                player.Cards.Insert(0, card);
+            }
+            _bounty.Clear();
+        }
+
+        private void displayBattleWinner(Player player)
+        {
+            BattleResult.Append(&quot;<strong>");
+            BattleResult.Append(player.Name);
+            BattleResult.Append(" wins!</strong>");
+        }
+
+        private void displayBounty()
+        {
+            BattleResult.Append("Bounty ...");
+            foreach (var card in _bounty)
+            {
+                BattleResult.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                BattleResult.Append(card.Rank);
+                BattleResult.Append(" of ");
+                BattleResult.Append(card.Suit);
+                BattleResult.Append("");
+            }
+        }
+    }
